@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiPtPg", "ApiPtPg\ApiPtPg.csproj", "{BBF1ADA1-3F9E-47D6-9E17-3F8F8C8812B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BBF1ADA1-3F9E-47D6-9E17-3F8F8C8812B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBF1ADA1-3F9E-47D6-9E17-3F8F8C8812B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBF1ADA1-3F9E-47D6-9E17-3F8F8C8812B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBF1ADA1-3F9E-47D6-9E17-3F8F8C8812B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13286D0B-0CF7-4FE0-88FC-043AA0244559}
+	EndGlobalSection
+EndGlobal
