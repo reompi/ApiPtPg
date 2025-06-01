@@ -63,7 +63,37 @@ namespace ApiPtPg.Controllers
 
             return user;
         }
+        //Put api/makeAdmin
+        [HttpPut("{id}/makeAdmin")]
+        public async Task<IActionResult> MakeAdmin(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
 
+            if (user == null)
+            {
+                return NotFound($"User with ID {id} not found.");
+            }
+
+            user.Role = "admin";
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok($"User with ID {id} has been updated to admin.");
+        }
         // POST: api/users
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
@@ -123,6 +153,19 @@ namespace ApiPtPg.Controllers
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+        // GET: api/users/{id}/username
+        [HttpGet("{id}/username")]
+        public async Task<ActionResult<string>> GetUsername(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound($"User with ID {id} not found.");
+            }
+
+            return Ok(user.Username);
         }
     }
 }

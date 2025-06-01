@@ -349,7 +349,7 @@ namespace ApiPtPg.Controllers
 
             // Find the note that belongs to this user
             var note = await _context.Notes
-                .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
+                .FirstOrDefaultAsync(n => n.Id == id);
 
             if (note == null)
             {
@@ -408,11 +408,38 @@ namespace ApiPtPg.Controllers
                     DislikesCount = n.Dislikes.Count(),
                     IsLiked = n.Likes.Any(l => l.UserId == userId),
                     IsDisliked = n.Dislikes.Any(d => d.UserId == userId),
-                    CreatedAt = n.CreatedAt
+                    CreatedAt = n.CreatedAt,
+                    userId = n.UserId
                 })
                 .ToList();
 
             return Ok(notes);
+        }
+        // GET: api/notes/mine
+        [Authorize]
+        [HttpGet("mine")]
+        public async Task<ActionResult<IEnumerable<Note>>> GetMyNotes()
+        {
+            // Get the UserId from the JWT token
+            var userIdClaim = HttpContext.User.FindFirst("UserId");
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token.");
+            }
+
+            int userId = int.Parse(userIdClaim.Value);
+
+                // Query the notes that belong to the user
+                var userNotes = await _context.Notes
+                    .Where(n => n.UserId == userId)  // Assuming Note entity has a UserId property
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    Notes = userNotes
+                });
+            return Unauthorized("");
         }
 
 
