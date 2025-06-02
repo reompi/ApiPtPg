@@ -102,6 +102,7 @@ namespace ApiPtPg.Controllers
             return NoContent(); // 204 No Content
         }
         // DELETE: api/Folders/{id}
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFolder(int id)
         {
@@ -111,11 +112,43 @@ namespace ApiPtPg.Controllers
                 return NotFound();
             }
 
+            // Listar todos os claims para depuração
+            var allClaims = string.Join(", ", User.Claims.Select(c => $"{c.Type}: {c.Value}"));
+            // Tente encontrar o claim "UserId" (case sensitive)
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+            if (userIdClaim == null)
+            {
+                return Unauthorized($"UserId não encontrado no token. Claims disponíveis: {allClaims}");
+            }
+
+            int userId = int.Parse(userIdClaim.Value);
+
+            if (folder.UserId != userId)
+            {
+                return Forbid("Você não tem permissão para excluir esta pasta.");
+            }
+
             _context.Folders.Remove(folder);
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+        // DELETE:  {id}
+        [Authorize(Roles = "admin")]
+        [HttpDelete("user/{userId}")]
+        public async Task<IActionResult> DeleteAllFoldersFromUser(int userId)
+        {
+            var folders = await _context.Folders.Where(f => f.UserId == userId).ToListAsync();
 
+            if (!folders.Any())
+            {
+                return NotFound("Nenhuma pasta encontrada para este usuário.");
+            }
+
+            _context.Folders.RemoveRange(folders);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

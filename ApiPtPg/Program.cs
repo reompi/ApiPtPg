@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+
 // JWT Authentication configuration
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]); // Get secret key from appsettings.json
 builder.Services.AddAuthentication(options =>
@@ -47,7 +49,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        ClockSkew = TimeSpan.Zero // Optional: Adjust if you want to avoid delays on expiration
+        ClockSkew = TimeSpan.Zero,
+        RoleClaimType = ClaimTypes.Role // <-- Adicione esta linha
     };
 });
 

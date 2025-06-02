@@ -22,7 +22,7 @@ namespace ApiPtPg.Models
 
         public string Role { get; set; } = "user";
 
-
+        public string AccountStatus { get; set; } = "active";
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

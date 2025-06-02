@@ -21,7 +21,9 @@
         new Claim(ClaimTypes.Name, user.Username),
         new Claim(ClaimTypes.Email, user.Email),
         new Claim("Role", user.Role), // Add role claim
-        new Claim("UserId", user.Id.ToString())
+        new Claim("UserId", user.Id.ToString()),
+new Claim(ClaimTypes.Role, user.Role)
+
     };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

@@ -219,9 +219,26 @@ namespace ApiPtPg.Controllers
             return Ok();
         }
 
+        // DELETE: api/notes/user/5
+        [Authorize(Roles = "admin")]
+        [HttpDelete("user/{userId}")]
+        public async Task<IActionResult> DeleteAllNotesByUser(int userId)
+        {
+            var userNotes = await _context.Notes.Where(n => n.UserId == userId).ToListAsync();
 
+            if (!userNotes.Any())
+            {
+                return NotFound("Nenhuma nota encontrada para este usuário.");
+            }
+
+            _context.Notes.RemoveRange(userNotes);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
 
         // DELETE: api/notes/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNote(int id)
         {
@@ -229,6 +246,24 @@ namespace ApiPtPg.Controllers
             if (note == null)
             {
                 return NotFound();
+            }
+
+            // Recupera o UserId do token
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == "Role" || c.Type == System.Security.Claims.ClaimTypes.Role);
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized("UserId não encontrado no token.");
+            }
+
+            int userId = int.Parse(userIdClaim.Value);
+            string role = roleClaim?.Value ?? "";
+
+            // Permite se for admin ou dono da nota
+            if (note.UserId != userId && role != "admin")
+            {
+                return Forbid("Você não tem permissão para excluir esta nota.");
             }
 
             _context.Notes.Remove(note);
@@ -439,7 +474,6 @@ namespace ApiPtPg.Controllers
                 {
                     Notes = userNotes
                 });
-            return Unauthorized("");
         }
 
 
